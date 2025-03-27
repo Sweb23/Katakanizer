@@ -6,11 +6,14 @@ import pandas as pd
     The data is converted into a CSV file to be used in the ML model.
 """
 
+uName = "" # Replace with your MySQL username
+pWord="" # Replace with your MySQL password
+
 # Connect to MySQL database
 conn = mysql.connector.connect(
     host="localhost",       # Change if your MySQL server is remote
-    user="root",   # Replace with your MySQL username
-    password="azerty", # Replace with your MySQL password
+    user=uName,   # Replace with your MySQL username
+    password=pWord, # Replace with your MySQL password
     database="loanwords"    # Your database name
 )
 
