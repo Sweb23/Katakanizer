@@ -12,8 +12,8 @@ pWord="" # Replace with your MySQL password
 # Connect to MySQL database
 conn = mysql.connector.connect(
     host="localhost",       # Change if your MySQL server is remote
-    user=uName,   # Replace with your MySQL username
-    password=pWord, # Replace with your MySQL password
+    user=uName,  
+    password=pWord,
     database="loanwords"    # Your database name
 )
 
