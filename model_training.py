@@ -63,6 +63,6 @@ model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
 
 # Train the model
-model.fit([X_train, X_train], y_train, batch_size=64, epochs=40, validation_data=([X_test, X_test], y_test))
+model.fit([X_train, X_train], y_train, batch_size=64, epochs=30, validation_data=([X_test, X_test], y_test))
 
 model.save("katakanizer_model.h5")
