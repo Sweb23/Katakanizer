@@ -45,14 +45,16 @@ print("Splitting training and testing data...\n")
 X_train, X_test, y_train, y_test = train_test_split(romaji_padded, katakana_padded_onehot, test_size=0.2, random_state=42)
 
 # Encoder
+# Disabling automatic masking to avoid NotEqual
 encoder_inputs = Input(shape=(max_seq_length,))
-encoder_embedding = Embedding(input_dim=romaji_vocab_size, output_dim=128, mask_zero=True)(encoder_inputs)
+encoder_embedding = Embedding(input_dim=romaji_vocab_size, output_dim=128, mask_zero=False)(encoder_inputs)
 encoder_lstm = LSTM(256, return_state=True)
 encoder_outputs, state_h, state_c = encoder_lstm(encoder_embedding)
 
 # Decoder
+# Disabling automatic masking to avoid NotEqual
 decoder_inputs = Input(shape=(max_seq_length,))
-decoder_embedding = Embedding(input_dim=katakana_vocab_size, output_dim=128, mask_zero=True)(decoder_inputs)
+decoder_embedding = Embedding(input_dim=katakana_vocab_size, output_dim=128, mask_zero=False)(decoder_inputs)
 decoder_lstm = LSTM(256, return_sequences=True, return_state=True)
 decoder_outputs, _, _ = decoder_lstm(decoder_embedding, initial_state=[state_h, state_c])
 decoder_dense = Dense(katakana_vocab_size, activation="softmax")
