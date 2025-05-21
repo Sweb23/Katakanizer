@@ -1,35 +1,17 @@
 from sklearn.model_selection import train_test_split
-import pandas as pd
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, LSTM, Dense, Embedding
+import utils
+import sys
 
-# Load dataset
-df = pd.read_csv("loanwords.csv")
+args = sys.argv
 
-# Extract input (Latin) and output (Katakana)
-romaji_texts = df["latin"].astype(str).tolist()
-katakana_texts = df["katakana"].astype(str).tolist()
+is_light = (args[1] == "light")
 
-# Tokenize Romaji
-romaji_tokenizer = Tokenizer(char_level=True)  # Tokenize at character level
-romaji_tokenizer.fit_on_texts(romaji_texts)
-romaji_sequences = romaji_tokenizer.texts_to_sequences(romaji_texts)
-romaji_vocab_size = len(romaji_tokenizer.word_index) + 1  # +1 for padding
-
-# Tokenize Katakana
-katakana_tokenizer = Tokenizer(char_level=True)  # Tokenize at character level
-katakana_tokenizer.fit_on_texts(katakana_texts)
-katakana_sequences = katakana_tokenizer.texts_to_sequences(katakana_texts)
-katakana_vocab_size = len(katakana_tokenizer.word_index) + 1
-
-# Padding sequences to max length
-max_seq_length = max(max(len(seq) for seq in romaji_sequences),
-                     max(len(seq) for seq in katakana_sequences))
+romaji_tokenizer, katakana_tokenizer, romaji_sequences, katakana_sequences, romaji_vocab_size, katakana_vocab_size, max_seq_length = utils.create_tokenizers(is_light)
 
 romaji_padded = pad_sequences(romaji_sequences, maxlen=max_seq_length, padding="post")
 katakana_padded = pad_sequences(katakana_sequences, maxlen=max_seq_length, padding="post")
@@ -67,4 +49,7 @@ model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accur
 # Train the model
 model.fit([X_train, X_train], y_train, batch_size=64, epochs=30, validation_data=([X_test, X_test], y_test))
 
-model.save("katakanizer_model.h5")
+if is_light:
+    model.save("katakanizer_model.h5")
+else:
+    model.save("katakanizer_model_light.h5")
