@@ -1,15 +1,13 @@
-import pickle
 import pandas as pd
 from tensorflow.keras.preprocessing.text import Tokenizer
 
 
 def create_tokenizers(is_light = False):
-    # Load dataset
     df = pd.read_csv("loanwords.csv")
 
-    # Shuffle and optionally reduce to 10%
+    # Shuffle and optionally reduce to 25%
     if is_light:
-        df = df.sample(frac=0.1, random_state=42).reset_index(drop=True)
+        df = df.sample(frac=0.25, random_state=42).reset_index(drop=True)
 
     # Extract input (Latin) and output (Katakana)
     romaji_texts = df["latin"].astype(str).tolist()

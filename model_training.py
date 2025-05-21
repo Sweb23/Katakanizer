@@ -11,6 +11,9 @@ args = sys.argv
 
 is_light = (args[1] == "light")
 
+if is_light:
+    print("Training light model\n")
+
 romaji_tokenizer, katakana_tokenizer, romaji_sequences, katakana_sequences, romaji_vocab_size, katakana_vocab_size, max_seq_length = utils.create_tokenizers(is_light)
 
 romaji_padded = pad_sequences(romaji_sequences, maxlen=max_seq_length, padding="post")
@@ -50,6 +53,6 @@ model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accur
 model.fit([X_train, X_train], y_train, batch_size=64, epochs=30, validation_data=([X_test, X_test], y_test))
 
 if is_light:
-    model.save("katakanizer_model.h5")
-else:
     model.save("katakanizer_model_light.h5")
+else:
+    model.save("katakanizer_model.h5")
