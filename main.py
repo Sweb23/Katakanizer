@@ -13,6 +13,7 @@ is_light = (args[1] == "light")
 
 if is_light:
     model = keras.models.load_model("katakanizer_model_light.h5")
+    print("Using light model.")
 else:
     model = keras.models.load_model("katakanizer_model.h5")
     
@@ -23,17 +24,21 @@ romaji_tokenizer, katakana_tokenizer, _, _, _, _, max_seq_length = utils.create_
 while True:
     query = input("Enter your query in the latin alphabet : ")
 
-    if not is_latin(query):
+    words = query.split()
+
+    if any(not is_latin(word) for word in words):
         print("Error : input contains letters not recognized as latin.\n")
     else:
+        result = []
+        for word in words:
+            seq = romaji_tokenizer.texts_to_sequences([word.lower()])
+            padded_seq = pad_sequences(seq, maxlen=max_seq_length, padding='post')
 
-        seq = romaji_tokenizer.texts_to_sequences([query.lower()])
-        padded_seq = pad_sequences(seq, maxlen=max_seq_length, padding='post')
+            # Predict
+            prediction = model.predict([padded_seq, padded_seq])
+            predicted_indices = np.argmax(prediction, axis=-1)[0]
 
-        # Predict
-        prediction = model.predict([padded_seq, padded_seq])
-        predicted_indices = np.argmax(prediction, axis=-1)[0]
+            output_katakana = ''.join([katakana_tokenizer.index_word.get(i, '') for i in predicted_indices if i != 0])
+            result.append(output_katakana)
 
-        output_katakana = ''.join([katakana_tokenizer.index_word.get(i, '') for i in predicted_indices if i != 0])
-
-        print(f"Katakana: {output_katakana}")
+        print(f"Katakana: {' '.join(result)}")
