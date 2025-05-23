@@ -18,22 +18,22 @@ else:
     
 
 print("Loading model...\n")
+romaji_tokenizer, katakana_tokenizer, _, _, _, _, max_seq_length = utils.create_tokenizers(is_light)
 
-query = input("Enter your query in the latin alphabet : ")
+while True:
+    query = input("Enter your query in the latin alphabet : ")
 
-if not is_latin(query):
-    print("Error : input contains letters not recognized as latin.\n")
-else:
-    romaji_tokenizer, katakana_tokenizer, _, _, _, _, max_seq_length = utils.create_tokenizers(is_light)
+    if not is_latin(query):
+        print("Error : input contains letters not recognized as latin.\n")
+    else:
 
-    seq = romaji_tokenizer.texts_to_sequences([query.lower()])
-    padded_seq = pad_sequences(seq, maxlen=max_seq_length, padding='post')
+        seq = romaji_tokenizer.texts_to_sequences([query.lower()])
+        padded_seq = pad_sequences(seq, maxlen=max_seq_length, padding='post')
 
-    # Predict
-    prediction = model.predict([padded_seq, padded_seq])
-    predicted_indices = np.argmax(prediction, axis=-1)[0]
+        # Predict
+        prediction = model.predict([padded_seq, padded_seq])
+        predicted_indices = np.argmax(prediction, axis=-1)[0]
 
-    # Decode prediction
-    output_katakana = ''.join([katakana_tokenizer.index_word.get(i, '') for i in predicted_indices if i != 0])
+        output_katakana = ''.join([katakana_tokenizer.index_word.get(i, '') for i in predicted_indices if i != 0])
 
-    print(f"Katakana: {output_katakana}")
+        print(f"Katakana: {output_katakana}")

@@ -24,10 +24,8 @@ cursor.execute("SELECT * FROM merged;")
 
 rows = cursor.fetchall()
 
-# Get column names from cursor.description
 column_names = [desc[0] for desc in cursor.description]
 
-# Convert to a pandas DataFrame
 df = pd.DataFrame(rows, columns=column_names)
 
 

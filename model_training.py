@@ -19,7 +19,6 @@ romaji_tokenizer, katakana_tokenizer, romaji_sequences, katakana_sequences, roma
 romaji_padded = pad_sequences(romaji_sequences, maxlen=max_seq_length, padding="post")
 katakana_padded = pad_sequences(katakana_sequences, maxlen=max_seq_length, padding="post")
 
-# One-hot encode the Katakana outputs
 katakana_padded_onehot = to_categorical(katakana_padded, num_classes=katakana_vocab_size)
 
 print("INFO : Sequences are converted to 16-bit floats.\n")
@@ -45,11 +44,11 @@ decoder_outputs, _, _ = decoder_lstm(decoder_embedding, initial_state=[state_h, 
 decoder_dense = Dense(katakana_vocab_size, activation="softmax")
 decoder_outputs = decoder_dense(decoder_outputs)
 
-# Define the full model
+
 model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
 
-# Train the model
+
 model.fit([X_train, X_train], y_train, batch_size=64, epochs=30, validation_data=([X_test, X_test], y_test))
 
 if is_light:
